@@ -11,7 +11,7 @@ import { toast } from "react-hot-toast";
 
 import useAuthModal from "@/hooks/useAuthModal";
 import { useUser } from "@/hooks/useUser";
-import usePlayer from "@/hooks/usePlayer"; 
+import usePlayer from "@/hooks/usePlayer";
 import Button from "./Button"; 
 
 const Header = ({ children, className }) => {
@@ -20,15 +20,25 @@ const Header = ({ children, className }) => {
   
   const supabaseClient = useSupabaseClient();
   const { user } = useUser();
-  const player = usePlayer(); 
+  const player = usePlayer();
 
   const handleLogout = async () => {
     const { error } = await supabaseClient.auth.signOut();
+    
+    // 1. Reset the player immediately (stops music)
     player.reset(); 
+    
+    // 2. Refresh the page logic
     router.refresh();
     
+    // 3. Handle errors cleanly
     if (error) {
-       toast.error(error.message);
+       // FIX: If session is missing, it means we are already logged out. Treat as success.
+       if (error.message === 'Auth session missing!') {
+         toast.success('Logged out!');
+       } else {
+         toast.error(error.message);
+       }
     } else {
        toast.success('Logged out!');
     }
@@ -58,7 +68,7 @@ const Header = ({ children, className }) => {
           </button>
         </div>
 
-        {/* Mobile Navigation - FIXED LINKS */}
+        {/* Mobile Navigation */}
         <div className="flex md:hidden gap-x-2 items-center">
           <button 
             onClick={() => router.push('/')} 
