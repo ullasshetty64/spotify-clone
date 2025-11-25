@@ -25,22 +25,21 @@ const Header = ({ children, className }) => {
   const handleLogout = async () => {
     const { error } = await supabaseClient.auth.signOut();
     
-    // 1. Reset the player immediately (stops music)
+    // 1. Reset Player
     player.reset(); 
     
-    // 2. Refresh the page logic
-    router.refresh();
-    
-    // 3. Handle errors cleanly
+    // 2. Handle Errors or Success
     if (error) {
-       // FIX: If session is missing, it means we are already logged out. Treat as success.
+       // Ignore the "missing session" error as we discussed
        if (error.message === 'Auth session missing!') {
          toast.success('Logged out!');
+         window.location.href = '/'; // Force reload to home
        } else {
          toast.error(error.message);
        }
     } else {
        toast.success('Logged out!');
+       window.location.href = '/'; // Force reload to home
     }
   };
 
