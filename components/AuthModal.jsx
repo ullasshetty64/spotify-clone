@@ -38,7 +38,7 @@ const AuthModal = () => {
     >
       <Auth 
         supabaseClient={supabaseClient}
-        providers={["github"]} // You can add "google" etc here
+        providers={[]} // You can add "google" etc here
         magicLink
         appearance={{
           theme: ThemeSupa,
